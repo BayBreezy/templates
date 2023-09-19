@@ -7,11 +7,10 @@ declare type AccordionItem = {
 };
 
 declare type Template = {
-  _id: string;
-  name: string;
-  html: string;
+  _id?: string;
+  name?: string;
+  html?: string;
   design: Object;
-  createdAt: Date;
-  updatedAt: Date;
-  __v: number;
+  createdAt?: Date;
+  updatedAt?: Date;
 };

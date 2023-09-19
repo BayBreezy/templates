@@ -6,13 +6,46 @@
           <UIButton to="/" variant="outline" size="icon" class="mr-4 h-8 w-8">
             <Icon name="ph:arrow-left" class="h-4 w-4" />
           </UIButton>
-          <h1>{{ template?.name }}</h1>
+          <h1 class="text-lg font-semibold">{{ template?.name }}</h1>
         </div>
 
         <div class="flex items-center gap-2">
-          <UIButton variant="outline" @click="saveDesign">Save Design</UIButton>
-          <UIButton variant="outline" @click="exportHtml">Export HTML</UIButton>
-          <UIButton variant="outline" @click="preview">Preview</UIButton>
+          <UIDropdownMenu>
+            <UIDropdownMenuTrigger asChild>
+              <UIButton variant="outline"
+                >Actions <Icon name="solar:alt-arrow-down-line-duotone"
+              /></UIButton>
+            </UIDropdownMenuTrigger>
+            <UIDropdownMenuContent class="w-[200px]" align="end" :sideOffset="10">
+              <UIDropdownMenuGroup class="space-y-1">
+                <UIDropdownMenuItem
+                  @click="saveDesign"
+                  title="Save design"
+                  icon="solar:diskette-line-duotone"
+                />
+                <UIDropdownMenuItem
+                  @click="exportHtml"
+                  title="Export HTML"
+                  icon="solar:cloud-download-line-duotone"
+                />
+                <UIDropdownMenuItem
+                  @click="preview"
+                  title="Preview design"
+                  icon="solar:telescope-line-duotone"
+                />
+                <UIDropdownMenuItem
+                  @click="open()"
+                  title="Import design"
+                  icon="solar:upload-minimalistic-bold-duotone"
+                />
+                <UIDropdownMenuItem
+                  @click="downloadDesign()"
+                  title="Download design"
+                  icon="solar:download-minimalistic-bold-duotone"
+                />
+              </UIDropdownMenuGroup>
+            </UIDropdownMenuContent>
+          </UIDropdownMenu>
         </div>
       </div>
 
@@ -23,6 +56,9 @@
             fonts: {
               showDefaultFonts: false,
             },
+          }"
+          :appearance="{
+            theme: mode,
           }"
           style="height: 100%"
           ref="emailEditor"
@@ -42,6 +78,8 @@
   const router = useRouter();
   const emailEditor = shallowRef<EmailEditor>();
 
+  const { mode } = useTheme();
+
   const template = ref<Template | null>();
 
   if (route.query.id) {
@@ -50,47 +88,40 @@
   }
 
   async function createNewTemplate() {
-    try {
-      emailEditor?.value.editor.exportHtml(async (data: any) => {
-        const res = await $fetch<Template>("/api/templates", {
-          method: "POST",
-          body: {
-            name: "New Template",
-            html: data.html,
-            design: data.design,
-          },
-        });
-
-        router.push({
-          path: "/editor",
-          query: {
-            id: res._id,
-          },
-        });
-
-        template.value = res;
-        alert("Template created successfully");
+    emailEditor?.value.editor.exportHtml(async (data: any) => {
+      const res = await useToast.promise(useCreateTemplate(data), {
+        error: "Failed to create template",
+        success: {
+          closeButton: true,
+          closeOnClick: true,
+          render: () => "Template created successfully",
+        },
+        pending: "Creating template...",
       });
-    } catch (error) {
-      console.log(error);
-    }
+
+      router.push({
+        path: "/editor",
+        query: {
+          id: res._id,
+        },
+      });
+
+      template.value = res;
+    });
   }
 
   async function updateTemplate() {
     emailEditor?.value.editor.exportHtml(async (data: any) => {
-      try {
-        const res = await $fetch<Template>(`/api/templates/${route.query.id}`, {
-          method: "PUT",
-          body: {
-            html: data.html,
-            design: data.design,
-          },
-        });
-        template.value = res;
-        alert("Template updated successfully");
-      } catch (error) {
-        console.log(error);
-      }
+      const res = await useToast.promise(useUpdateTemplate(route.query.id as string, data), {
+        error: "Failed to update template",
+        success: {
+          closeButton: true,
+          closeOnClick: true,
+          render: () => "Template updated successfully",
+        },
+        pending: "Updating template...",
+      });
+      template.value = res;
     });
   }
   async function editorLoaded() {
@@ -99,7 +130,7 @@
   }
   function saveDesign() {
     if (!route.query.id) {
-      return createNewTemplate();
+      createNewTemplate();
     } else {
       updateTemplate();
     }
@@ -107,22 +138,36 @@
 
   function exportHtml() {
     emailEditor?.value.editor.exportHtml(async (data: any) => {
-      // download the html as index.html or the template.name if template is not null
-      const fileName = template.value?.name || "index";
-      const blob = new Blob([data.html], { type: "text/html" });
-      const link = document.createElement("a");
-      link.href = window.URL.createObjectURL(blob);
-      link.download = `${fileName}.html`;
-      link.click();
-      window.URL.revokeObjectURL(link.href);
+      useExportTemplate(template.value?.name + ".html", data.html);
+    });
+  }
+
+  function downloadDesign() {
+    emailEditor?.value.editor.exportHtml(async (data: any) => {
+      useExportTemplate(template.value?.name + ".json", JSON.stringify(data.design));
     });
   }
 
   function preview() {
     emailEditor?.value.editor.exportHtml(async (data: any) => {
-      const win = window.open("", template.value?.name || "Preview");
-      win?.document.write(data.html);
-      win?.document.close();
+      usePreviewTemplate(data.html);
     });
   }
+
+  const { open, onChange: importDesign } = useFileDialog({
+    accept: ".json",
+    multiple: false,
+    reset: true,
+  });
+
+  importDesign((files) => {
+    if (!files) return;
+    const file = files[0];
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const design = JSON.parse(e.target?.result as string);
+      emailEditor?.value.editor.loadDesign(design);
+    };
+    reader.readAsText(file);
+  });
 </script>

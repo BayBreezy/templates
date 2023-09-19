@@ -9,7 +9,7 @@
         <UITooltip>
           <template #trigger>
             <UITooltipTrigger>
-              <UIButton variant="ghost" size="icon" @click="toggleColorMode">
+              <UIButton variant="outline" size="icon" @click="toggleColorMode">
                 <Icon
                   class="h-5 w-5"
                   :name="
@@ -39,29 +39,42 @@
             <UICardTitle class="flex items-center justify-between gap-2 text-base font-semibold"
               >{{ t.name }}
 
-              <UITooltip>
-                <template #trigger>
-                  <UITooltipTrigger>
-                    <UIButton
+              <UIDropdownMenu>
+                <UIDropdownMenuTrigger asChild>
+                  <UIButton class="h-8 w-8" variant="ghost" size="icon"
+                    ><Icon class="h-5 w-5 rotate-90" name="solar:menu-dots-bold-duotone"
+                  /></UIButton>
+                </UIDropdownMenuTrigger>
+                <UIDropdownMenuContent class="min-w-[180px]" align="end" :side-offset="8">
+                  <UIDropdownMenuGroup class="space-y-1">
+                    <UIDropdownMenuItem
                       @click="
-                        editNameDialog = true;
                         editItem = t;
+                        editNameDialog = true;
                       "
-                      class="h-8 w-8"
-                      variant="ghost"
-                      size="icon"
-                      ><Icon name="solar:pen-2-line-duotone"
-                    /></UIButton>
-                  </UITooltipTrigger>
-                </template>
-                <template #content>
-                  <UITooltipContent align="center">
-                    <p class="text-sm">Edit template name</p>
-                  </UITooltipContent>
-                </template>
-              </UITooltip>
+                      title="Edit name"
+                      icon="solar:pen-line-duotone"
+                    />
+                    <UIDropdownMenuItem
+                      @click="useExportTemplate(t.name + '.html', t.html!)"
+                      title="Export HTML"
+                      icon="solar:cloud-download-line-duotone"
+                    />
+                    <UIDropdownMenuItem
+                      @click="useExportTemplate(t.name + '.json', JSON.stringify(t.design))"
+                      title="Download design"
+                      icon="solar:download-minimalistic-bold-duotone"
+                    />
+                    <UIDropdownMenuItem
+                      @click="usePreviewTemplate(t.html!)"
+                      title="Preview design"
+                      icon="solar:telescope-line-duotone"
+                    />
+                  </UIDropdownMenuGroup>
+                </UIDropdownMenuContent>
+              </UIDropdownMenu>
             </UICardTitle>
-            <UICardDescription>{{ formatDate(t.createdAt) }}</UICardDescription>
+            <UICardDescription class="truncate">{{ formatDate(t.createdAt) }}</UICardDescription>
           </UICardHeader>
           <UICardFooter class="gap-3">
             <UIAlertDialog
@@ -96,8 +109,13 @@
     <UIDialog :default-open="false" v-model="editNameDialog">
       <UIDialogContent title="Edit template name" description="Enter a new name for your template">
         <template #content>
-          <div class="py-4">
-            <UIFormInput name="name" label="Template name" placeholder="Template name" />
+          <div class="py-2">
+            <UIFormInput
+              :disabled="isSubmitting"
+              name="name"
+              label="Template name"
+              placeholder="Template name"
+            />
           </div>
         </template>
         <template #footer>
@@ -110,7 +128,7 @@
               "
               >Cancel</UIButton
             >
-            <UIButton @click="updateTemplate">Update</UIButton>
+            <UIButton :disabled="isSubmitting" @click="updateTemplate">Update</UIButton>
           </UIDialogFooter>
         </template>
       </UIDialogContent>
@@ -122,34 +140,26 @@
   import { object, string } from "yup";
 
   useSeoMeta({ title: "Templates" });
-
+  // State for dialog used to edit template name
   const editNameDialog = ref(false);
-
+  // State for template being edited
   const editItem = ref<Template | null>(null);
-
+  // Watch for dialog closing and reset editItem
   watch(editNameDialog, (val) => {
     if (!val) {
       editItem.value = null;
     }
   });
-
+  // Fetch templates
   const { data: templates, refresh } = useFetch<Template[]>("/api/templates");
-
-  const formatDate = (date: Date) => {
-    return new Date(date).toLocaleDateString("en-US", {
-      month: "long",
-      day: "numeric",
-      year: "numeric",
-      hour: "numeric",
-      minute: "numeric",
-      hour12: true,
-    });
+  // Format date
+  const formatDate = (date?: Date) => {
+    if (!date) return "";
+    return useDateFormat(date, "MMMM DD, YYYY @ hh:mm AA").value;
   };
 
-  const mode = useColorMode();
-  const toggleColorMode = () => {
-    mode.value = mode.value === "dark" ? "light" : "dark";
-  };
+  // Theme toggler
+  const { mode, toggleColorMode } = useTheme();
 
   const { handleSubmit, isSubmitting } = useForm({
     initialValues: editItem,
@@ -161,24 +171,23 @@
   });
 
   const updateTemplate = handleSubmit(async (values) => {
-    const { error } = await useFetch(`/api/templates/${editItem.value?._id}`, {
-      method: "PUT",
-      body: JSON.stringify(values),
+    if (!editItem.value) return;
+    await useToast.promise(useUpdateTemplate(editItem.value._id!, values), {
+      error: "Failed to update template",
+      success: "Template updated successfully",
+      pending: "Updating template...",
     });
-    if (error.value) {
-      return console.log(error.value);
-    }
     await refresh();
     editNameDialog.value = false;
   });
 
-  const deleteTemplate = async (id: string) => {
-    const { error } = await useFetch(`/api/templates/${id}`, {
-      method: "DELETE",
+  const deleteTemplate = async (id?: string) => {
+    if (!id) return;
+    await useToast.promise(useDeleteTemplate(id), {
+      error: "Failed to delete template",
+      success: "Template deleted successfully",
+      pending: "Deleting template...",
     });
-    if (error.value) {
-      return console.log(error.value);
-    }
     await refresh();
   };
 </script>

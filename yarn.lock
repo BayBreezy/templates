@@ -7000,6 +7000,11 @@ vue3-otp-input@^0.4.1:
   resolved "https://registry.yarnpkg.com/vue3-otp-input/-/vue3-otp-input-0.4.1.tgz#4757cc771bb0c723e34b78857424322079d07fae"
   integrity sha512-wVl9i3DcWlO0C7fBI9V+RIP3crm/1tY72fuhvb3YM2JfbLoYofB96aPl5AgFhA0Cse5bQEMYtIvOeiqW3rfbAw==
 
+vue3-toastify@^0.1.12:
+  version "0.1.12"
+  resolved "https://registry.yarnpkg.com/vue3-toastify/-/vue3-toastify-0.1.12.tgz#7f10777e2e12226e1f9b4d1f9c94c70447850234"
+  integrity sha512-OQJPMt6dIpn+1vG+EZMO+QE5STAxoc0+Owo7sRjUyVw22Uxs6daVHq/sek75s4JMxbzePHtUqVfTZRgqLHmikw==
+
 vue@^3.2.13, vue@^3.3.4:
   version "3.3.4"
   resolved "https://registry.npmjs.org/vue/-/vue-3.3.4.tgz"

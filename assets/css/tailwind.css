@@ -35,6 +35,10 @@
     --ring: 222.2 47.4% 11.2%;
 
     --radius: 0.5rem;
+
+    /* Toast colors */
+    --toastify-color-light: theme("colors.background");
+    --toastify-text-color-light: theme("colors.foreground");
   }
 
   .dark {
@@ -68,6 +72,10 @@
     --ring: 210 40% 98%;
 
     --radius: 0.5rem;
+
+    /* Toast colors */
+    --toastify-color-light: theme("colors.muted.DEFAULT");
+    --toastify-text-color-light: theme("colors.foreground");
   }
 }
 

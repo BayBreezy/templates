@@ -2,11 +2,13 @@
 export default defineNuxtConfig({
   devtools: { enabled: true },
   typescript: { shim: false },
-  tailwindcss: { exposeConfig: true },
+  tailwindcss: { exposeConfig: true, injectPosition: "last" },
+  css: ["vue3-toastify/dist/index.css"],
   imports: {
     // Add tv and VariantProps to the set of auto imported modules
     imports: [
       { from: "tailwind-variants", name: "tv" },
+      { from: "vue3-toastify", name: "toast", as: "useToast" },
       { from: "tailwind-variants", name: "VariantProps", type: true },
     ],
   },
