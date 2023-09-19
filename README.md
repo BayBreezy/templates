@@ -1,7 +1,7 @@
-# Nuxt 3 UI Thing Starter
+# Templates
 
-An opinionated Nuxt 3 starter template with components built with Radix-Vue. This is my personal port of the shadcn/ui library.
+Demonstaration of how to use the Vue Unlayer package to implement a drag and drop email template builder.
 
-Feel free to make changes and delete what you dont need.
+Built with Radix-vue components styled like the shadcn-ui library.
 
 ![Cover](/public/cover.png)

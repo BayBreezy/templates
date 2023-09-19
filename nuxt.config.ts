@@ -16,6 +16,8 @@ export default defineNuxtConfig({
     head: {
       title: "Templates",
       link: [
+        // Favicon
+        { rel: "icon", type: "image/x-icon", href: "/icon.png" },
         // Inter font
         { rel: "stylesheet", href: "https://rsms.me/inter/inter.css" },
         { rel: "preconnect", href: "https://rsms.me/" },

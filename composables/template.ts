@@ -14,7 +14,7 @@ export const useDeleteTemplate = async (id: string) => {
 export const useCreateTemplate = async (values: Partial<Template>) => {
   return await $fetch<Template>(`/api/templates`, {
     method: "POST",
-    body: values,
+    body: { name: values.name || "New Template", ...values },
   });
 };
 

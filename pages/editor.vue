@@ -72,7 +72,6 @@
 <script lang="ts" setup>
   // @ts-ignore
   import { EmailEditor } from "vue-email-editor";
-  import sample from "@/sample.json";
 
   const route = useRoute();
   const router = useRouter();
@@ -129,7 +128,7 @@
     emailEditor?.value.editor.loadDesign(JSON.parse(JSON.stringify(template?.value?.design)));
   }
   function saveDesign() {
-    if (!route.query.id) {
+    if (!template.value) {
       createNewTemplate();
     } else {
       updateTemplate();
@@ -169,5 +168,10 @@
       emailEditor?.value.editor.loadDesign(design);
     };
     reader.readAsText(file);
+  });
+
+  useSeoMeta({
+    title: template.value?.name || "Editor",
+    description: "Create and edit email templates",
   });
 </script>
