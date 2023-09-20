@@ -21,7 +21,7 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "dependencies": {
-    "@tanstack/vue-table": "^8.10.0",
+    "@tanstack/vue-table": "^8.10.1",
     "@types/yup": "^0.32.0",
     "@vee-validate/nuxt": "^4.11.6",
     "@vee-validate/yup": "^4.11.6",
