@@ -8,16 +8,18 @@
       <div class="flex items-center gap-3">
         <UITooltip>
           <template #trigger>
-            <UITooltipTrigger>
-              <UIButton variant="outline" size="icon" @click="toggleColorMode">
-                <Icon
-                  class="h-5 w-5"
-                  :name="
-                    mode === 'dark' ? 'solar:sun-2-line-duotone' : 'solar:moon-fog-bold-duotone'
-                  "
-                />
-              </UIButton>
-            </UITooltipTrigger>
+            <ClientOnly>
+              <UITooltipTrigger>
+                <UIButton variant="outline" size="icon" @click="toggleColorMode">
+                  <Icon
+                    class="h-5 w-5"
+                    :name="
+                      mode === 'dark' ? 'solar:sun-2-line-duotone' : 'solar:moon-fog-bold-duotone'
+                    "
+                  />
+                </UIButton>
+              </UITooltipTrigger>
+            </ClientOnly>
           </template>
           <template #content>
             <UITooltipContent align="center">
