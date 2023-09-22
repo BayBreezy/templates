@@ -24,6 +24,9 @@ export default defineNuxtConfig({
       ],
     },
   },
+  mongoose: {
+    uri: process.env.MONGODB_URI || "mongodb://localhost:27017/your_db_name",
+  },
   modules: [
     "@nuxtjs/tailwindcss",
     "@vueuse/nuxt",
