@@ -42,7 +42,6 @@ services:
 volumes:
   templates_db_data:
 
-
 networks:
   mysql_network:
     driver: bridge
