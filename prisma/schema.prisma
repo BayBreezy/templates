@@ -1,0 +1,108 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id
+  createdAt     DateTime? @default(now())
+  updatedAt     DateTime? @updatedAt
+  name          String    @db.Text
+  email         String
+  emailVerified Boolean
+  image         String?   @db.Text
+  sessions      Session[]
+  accounts      Account[]
+
+  role       String?   @db.Text
+  banned     Boolean?
+  banReason  String?   @db.Text
+  banExpires DateTime?
+  projects   Project[]
+
+  @@unique([email])
+  @@map("user")
+}
+
+model Session {
+  id        String    @id
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+
+  expiresAt DateTime
+  token     String
+  ipAddress String?  @db.Text
+  userAgent String?  @db.Text
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  impersonatedBy String? @db.Text
+
+  @@unique([token])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  createdAt             DateTime? @default(now())
+  updatedAt             DateTime? @updatedAt
+  accountId             String    @db.Text
+  providerId            String    @db.Text
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?   @db.Text
+  refreshToken          String?   @db.Text
+  idToken               String?   @db.Text
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?   @db.Text
+  password              String?   @db.Text
+
+  @@map("account")
+}
+
+model Verification {
+  id         String    @id
+  identifier String    @db.Text
+  value      String    @db.Text
+  expiresAt  DateTime
+  createdAt  DateTime? @default(now())
+  updatedAt  DateTime? @updatedAt
+
+  @@map("verification")
+}
+
+model Template {
+  id        String    @id @default(cuid())
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+
+  name      String
+  html      String?  @db.MediumText
+  design    Json?
+  project   Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String?
+
+  @@index([name])
+  @@map("templates")
+}
+
+model Project {
+  id        String    @id @default(cuid())
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+
+  name        String
+  description String?
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  templates Template[]
+
+  @@index([name])
+  @@map("projects")
+}

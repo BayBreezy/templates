@@ -1,0 +1,48 @@
+services:
+  db:
+    image: mysql
+    container_name: templates_db
+    restart: always
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: templates
+      MYSQL_USER: templates
+      MYSQL_PASSWORD: templates
+    volumes:
+      - templates_db_data:/var/lib/mysql
+    networks:
+      - mysql_network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - DATABASE_URL=mysql://templates:templates@localhost:3307/templates
+    container_name: templates_app
+    restart: always
+    ports:
+      - "3030:3000"
+    depends_on:
+      - db
+    environment:
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
+      BETTER_AUTH_URL: "http://localhost:3030" # since we are using the same container
+      DATABASE_URL: mysql://templates:templates@db/templates
+      NUXT_SMTP_HOST: ${NUXT_SMTP_HOST}
+      NUXT_SMTP_PORT: ${NUXT_SMTP_PORT}
+      NUXT_SMTP_USER: ${NUXT_SMTP_USER}
+      NUXT_SMTP_PASS: ${NUXT_SMTP_PASS}
+      NUXT_SMTP_FROM: ${NUXT_SMTP_FROM}
+    networks:
+      - mysql_network
+
+volumes:
+  templates_db_data:
+
+
+networks:
+  mysql_network:
+    driver: bridge

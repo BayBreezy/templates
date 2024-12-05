@@ -1,39 +1,61 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   devtools: { enabled: true },
-  typescript: { shim: false },
-  tailwindcss: { exposeConfig: true, injectPosition: "last" },
-  css: ["vue3-toastify/dist/index.css"],
-  imports: {
-    // Add tv and VariantProps to the set of auto imported modules
-    imports: [
-      { from: "tailwind-variants", name: "tv" },
-      { from: "vue3-toastify", name: "toast", as: "useToast" },
-      { from: "tailwind-variants", name: "VariantProps", type: true },
-    ],
+  experimental: { typedPages: true },
+  future: { compatibilityVersion: 4 },
+  nitro: {
+    imports: { dirs: ["./lib"] },
   },
-  app: {
-    head: {
-      title: "Templates",
-      link: [
-        // Favicon
-        { rel: "icon", type: "image/x-icon", href: "/icon.png" },
-        // Inter font
-        { rel: "stylesheet", href: "https://rsms.me/inter/inter.css" },
-        { rel: "preconnect", href: "https://rsms.me/" },
-      ],
-    },
+  routeRules: {
+    "/": { redirect: "/auth/login" },
+    "/admin/**": { ssr: false },
+    "/api/**": { cors: true },
   },
-  mongoose: {
-    uri: process.env.MONGODB_URI || "mongodb://localhost:27017/your_db_name",
+  css: ["~/assets/css/tippy.css"],
+  runtimeConfig: {
+    SMTP_HOST: "",
+    SMTP_PORT: "",
+    SMTP_USER: "",
+    SMTP_PASS: "",
+    SMTP_FROM: "",
   },
   modules: [
     "@nuxtjs/tailwindcss",
     "@vueuse/nuxt",
-    "radix-vue/nuxt",
-    "nuxt-icon",
     "@vee-validate/nuxt",
-    "@samk-dev/nuxt-vcalendar",
-    "nuxt-mongoose",
+    "@nuxtjs/color-mode",
+    "@nuxt/icon",
+    "@nuxt/fonts",
+    "nuxt-unlayer",
+    "@morev/vue-transitions/nuxt",
+    "@nuxt/eslint",
+    "json-editor-vue/nuxt",
   ],
+  tailwindcss: { exposeConfig: true, editorSupport: true },
+  colorMode: { classSuffix: "" },
+  imports: {
+    imports: [
+      { from: "tailwind-variants", name: "tv" },
+      { from: "tailwind-variants", name: "VariantProps", type: true },
+      { from: "vue-sonner", name: "toast", as: "useSonner" },
+    ],
+  },
+
+  app: {
+    head: {
+      title: "Templates",
+      titleTemplate: "%s | Templates",
+      script: [
+        {
+          src: "https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.12/pdfmake.min.js",
+          defer: true,
+        },
+        {
+          src: "https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.12/vfs_fonts.min.js",
+          defer: true,
+        },
+      ],
+    },
+  },
+  compatibilityDate: "2024-12-03",
+  build: { transpile: ["vue-sonner"] },
 });
