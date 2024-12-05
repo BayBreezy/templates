@@ -1,7 +1,7 @@
 # Templates
 
-Demonstration of how to use the Vue Unlayer package to implement a drag and drop email template builder.
+An application that allows you to create and manage email design templates for different applications.
 
-Built with Radix-vue components styled like the shadcn-ui library.
+Styled with [UI Thing](https://ui-thing.behonbaker.com/getting-started/introduction) ❤️
 
 ![Cover](/public/cover.png)
