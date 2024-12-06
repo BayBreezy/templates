@@ -1,3 +1,5 @@
+export const useCurrentProject = () => useState<Project | undefined>("current_project");
+
 /**
  * Composable for managing projects.
  *

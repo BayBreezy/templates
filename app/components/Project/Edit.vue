@@ -1,13 +1,17 @@
 <template>
-  <div>
-    <UiCollapsible v-model:open="open">
-      <UiCollapsibleTrigger as-child>
-        <UiButton :variant="open ? 'outline' : 'secondary'">
-          {{ open ? "Close edit form" : "Click to edit project" }}
-          <Icon :name="open ? 'lucide:x' : 'lucide:chevron-down'" />
-        </UiButton>
-      </UiCollapsibleTrigger>
-      <UiCollapsibleContent>
+  <UiSheet v-model:open="open">
+    <UiSheetTrigger as-child>
+      <slot />
+    </UiSheetTrigger>
+
+    <UiSheetContent
+      class="md:max-w-xl"
+      side="right"
+      title="Edit project"
+      description="You can update the project name and description."
+    >
+      <template #content>
+        <UiDivider class="mb-5 mt-3" />
         <form class="mt-5 max-w-xl" @submit="submit">
           <fieldset :disabled="isSubmitting" class="grid gap-5">
             <UiVeeInput name="name" label="Project name" required />
@@ -21,41 +25,39 @@
             </div>
           </fieldset>
         </form>
-        <UiDivider class="mt-8" />
-      </UiCollapsibleContent>
-    </UiCollapsible>
-  </div>
+        <UiSheetX />
+      </template>
+    </UiSheetContent>
+  </UiSheet>
 </template>
 
 <script lang="ts" setup>
   const open = ref(false);
-  const project = inject<Ref<FindOne<Project>>>("project-details");
-
-  if (!project) {
-    throw createError({
-      statusCode: 404,
-      statusMessage: "Project not found.",
-      message: "The project you are trying to edit does not exist.",
-    });
-  }
+  const props = defineProps<{
+    project?: Project;
+  }>();
 
   const { handleSubmit, isSubmitting, setValues } = useForm({
     name: "edit-project-form",
-    initialValues: project?.value.data,
+    initialValues: props.project,
     validationSchema: toTypedSchema(CreateProjectSchema),
   });
 
   watch(open, (v) => {
     if (v) {
-      setValues(project?.value.data);
+      setValues(props.project || {});
     }
   });
 
   const submit = handleSubmit(async (values) => {
+    if (!props.project) return;
     try {
-      await useProject().update(project.value.data.id!, values);
-      useSonner.success("Project updated successfully.");
+      await useProject().update(props.project.id!, values);
+      useSonner.success("Project updated successfully.", {
+        position: "top-left",
+      });
       await refreshNuxtData();
+      open.value = false;
     } catch (error) {
       useSonner.error("Failed to update project.", {
         description: formatErrorMessage(error),

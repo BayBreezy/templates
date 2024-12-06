@@ -1,9 +1,12 @@
 <template>
   <UiNavbar sticky>
     <div class="container flex h-16 items-center justify-between">
-      <NuxtLink to="/">
-        <Logo class="h-6" />
-      </NuxtLink>
+      <div class="flex items-center gap-2">
+        <slot name="sidebar-trigger" />
+        <NuxtLink to="/">
+          <Logo class="h-6" />
+        </NuxtLink>
+      </div>
       <div class="flex items-center gap-2">
         <div v-tippy="'Go to projects'">
           <UiButton variant="outline" size="icon-sm" to="/">

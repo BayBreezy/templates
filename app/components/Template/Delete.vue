@@ -4,12 +4,14 @@
       <slot />
     </UiAlertDialogTrigger>
     <UiAlertDialogContent class="max-w-[400px]">
-      <UiFancyIcon type="light" color="error" circle icon="lucide:trash-2" />
+      <UiFancyIcon type="light" color="error" circle icon="">
+        <UiIcon class="text-destructive" name="lucide:trash-2" />
+      </UiFancyIcon>
       <UiAlertDialogHeader>
-        <UiAlertDialogTitle class="text-left">Delete Project</UiAlertDialogTitle>
+        <UiAlertDialogTitle class="text-left">Delete Template</UiAlertDialogTitle>
         <UiAlertDialogDescription class="text-left">
-          This action will permanently delete the project and all its associated design templates.
-          Are you sure you want to proceed?
+          This action will permanently delete this template design. Are you sure you want to
+          proceed?
         </UiAlertDialogDescription>
       </UiAlertDialogHeader>
       <UiAlertDialogFooter class="grid grid-cols-2">
@@ -22,20 +24,23 @@
 
 <script lang="ts" setup>
   const props = defineProps<{
-    project?: Project;
+    template?: Template;
+  }>();
+
+  const emit = defineEmits<{
+    refresh: [];
   }>();
 
   const performDelete = async () => {
-    if (!props.project) return;
+    if (!props.template) return;
     try {
-      await useProject().remove(props.project!.id!);
-      useSonner.success("Project deleted successfully.", {
-        description:
-          "The project along with all its associated design templates have been deleted.",
+      await useTemplate().remove(props.template!.id!);
+      useSonner.success("Template deleted successfully.", {
+        description: "The template has been deleted.",
       });
-      return await navigateTo("/admin/projects");
+      emit("refresh");
     } catch (error) {
-      useSonner.error("Failed to delete project.", {
+      useSonner.error("Failed to delete template.", {
         description: formatErrorMessage(error),
       });
     }

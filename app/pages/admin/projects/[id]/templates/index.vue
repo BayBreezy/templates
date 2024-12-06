@@ -1,39 +1,37 @@
 <template>
-  <div>
-    <MainNav />
-
-    <div class="container py-5">
-      <PageHeading :title="title" :description="description">
-        <div class="flex items-center gap-3">
-          <TemplateCreate>
-            <UiButton size="sm"><Icon name="lucide:plus" /> Add Template</UiButton>
-          </TemplateCreate>
-          <ProjectDelete>
-            <UiButton variant="outline"> <Icon name="lucide:trash" /> Delete Project</UiButton>
-          </ProjectDelete>
-        </div>
-      </PageHeading>
-
-      <UiDivider class="my-8" />
-
-      <ProjectEdit />
-      <div class="mt-10">
-        <UiDatatable :options="options" :columns="columns">
-          <template #actions="{ cellData }: { cellData: Template }">
-            <div class="flex items-center justify-end gap-2">
-              <UiButton
-                class="h-8"
-                size="sm"
-                @click="
-                  () =>
-                    $router.push(`/admin/projects/${data?.data.id}/templates/${cellData.id}/editor`)
-                "
-                >Edit</UiButton
-              >
-            </div>
-          </template>
-        </UiDatatable>
+  <div class="container py-5">
+    <PageHeading :title="title" :description="description">
+      <div class="flex items-center gap-3">
+        <TemplateCreate>
+          <UiButton size="sm"><Icon name="lucide:plus" /> Add Template</UiButton>
+        </TemplateCreate>
       </div>
+    </PageHeading>
+
+    <UiDivider class="my-8" />
+
+    <div class="mt-10">
+      <UiDatatable :options="options" :columns="columns" @ready="tableRef = $event">
+        <template #actions="{ cellData }: { cellData: Template }">
+          <div class="flex items-center justify-end gap-2">
+            <UiButton
+              class="size-8"
+              size="icon-sm"
+              @click="
+                () =>
+                  $router.push(`/admin/projects/${data?.data.id}/templates/${cellData.id}/editor`)
+              "
+            >
+              <UiIcon name="lucide:pen-line" />
+            </UiButton>
+            <TemplateDelete :template="cellData" @refresh="tableRef?.draw()">
+              <UiButton class="size-8" size="icon-sm" variant="outline">
+                <UiIcon name="lucide:trash-2"
+              /></UiButton>
+            </TemplateDelete>
+          </div>
+        </template>
+      </UiDatatable>
     </div>
   </div>
 </template>
@@ -42,6 +40,7 @@
   import DTRef from "datatables.net";
   import type { Config, ConfigColumns } from "datatables.net";
 
+  definePageMeta({ layout: "project" });
   const route = useRoute("admin-projects-id-templates");
 
   const { data } = await useAsyncData(() => useProject().getById(route.params.id));
@@ -52,7 +51,11 @@
   useSeoMeta({ title, description });
   // provide project data so child comps can access it
   provide("project-details", data);
+  // Set the current project
+  const currentProject = useCurrentProject();
+  currentProject.value = data.value?.data;
 
+  const tableRef = shallowRef<InstanceType<typeof DTRef<Template[]>> | null>(null);
   const columns: ConfigColumns[] = [
     { data: "id", title: "ID", visible: false },
     { data: "name", title: "Template name", responsivePriority: 0.5 },

@@ -11,6 +11,7 @@ export default defineNuxtConfig({
     "/api/**": { cors: true },
   },
   css: ["~/assets/css/tippy.css"],
+  icon: { clientBundle: { scan: true, sizeLimitKb: 0 }, mode: "svg" },
   modules: [
     "@nuxtjs/tailwindcss",
     "@vueuse/nuxt",
