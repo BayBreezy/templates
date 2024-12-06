@@ -29,5 +29,5 @@ export const getTransporter = () => {
 export const sendEmail = async (mailOptions: MailOptions) => {
   const transporter = getTransporter();
   transporter.use("compile", htmlToText());
-  return transporter.sendMail(mailOptions);
+  return transporter.sendMail({ ...mailOptions, from: process.env.SMTP_FROM });
 };
