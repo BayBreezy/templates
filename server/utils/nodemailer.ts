@@ -8,21 +8,20 @@ import type { MailOptions } from "nodemailer/lib/smtp-transport";
  * @returns A configured nodemailer transporter instance.
  */
 export const getTransporter = () => {
-  const config = useRuntimeConfig();
   return nodemailer.createTransport({
-    host: config.SMTP_HOST,
-    port: Number(config.SMTP_PORT),
-    secure: Number(config.SMTP_PORT) === 465, // true for 465, false for other ports
-    from: config.SMTP_FROM,
+    host: process.env.SMTP_HOST,
+    port: Number(process.env.SMTP_PORT),
+    secure: Number(process.env.SMTP_PORT) === 465, // true for 465, false for other ports
+    from: process.env.SMTP_FROM,
     auth: {
-      user: config.SMTP_USER,
-      pass: config.SMTP_PASS,
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
     },
   });
 };
 
 /**
- * Sends an email using the SMTP configuration from the runtime config.
+ * Sends an email using the SMTP configuration from the runtime process.env.
  *
  * @param mailOptions - The mail options including to, from, subject, and body of the email.
  * @returns A promise that resolves when the email is sent.

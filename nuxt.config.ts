@@ -11,13 +11,6 @@ export default defineNuxtConfig({
     "/api/**": { cors: true },
   },
   css: ["~/assets/css/tippy.css"],
-  runtimeConfig: {
-    SMTP_HOST: "",
-    SMTP_PORT: "",
-    SMTP_USER: "",
-    SMTP_PASS: "",
-    SMTP_FROM: "",
-  },
   modules: [
     "@nuxtjs/tailwindcss",
     "@vueuse/nuxt",

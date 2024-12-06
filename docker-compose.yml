@@ -31,11 +31,11 @@ services:
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
       BETTER_AUTH_URL: "http://localhost:3030" # since we are using the same container
       DATABASE_URL: mysql://templates:templates@db/templates
-      NUXT_SMTP_HOST: ${NUXT_SMTP_HOST}
-      NUXT_SMTP_PORT: ${NUXT_SMTP_PORT}
-      NUXT_SMTP_USER: ${NUXT_SMTP_USER}
-      NUXT_SMTP_PASS: ${NUXT_SMTP_PASS}
-      NUXT_SMTP_FROM: ${NUXT_SMTP_FROM}
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASS: ${SMTP_PASS}
+      SMTP_FROM: ${SMTP_FROM}
     networks:
       - mysql_network
 
