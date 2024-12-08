@@ -2,11 +2,11 @@
   <div class="flex flex-col">
     <UiVeeInput
       v-model="password"
-      name="password"
-      label="Password"
+      :name="name"
+      :label="label"
       required
       class="peer pe-9"
-      placeholder="Password"
+      :placeholder="placeholder"
       :type="isVisible ? 'text' : 'password'"
       :aria-invalid="strengthScore < requirements.length"
     >
@@ -110,4 +110,17 @@
     if (score === 4) return "Medium password";
     return "Strong password";
   };
+
+  withDefaults(
+    defineProps<{
+      name?: string;
+      label?: string;
+      placeholder?: string;
+    }>(),
+    {
+      name: "password",
+      label: "Password",
+      placeholder: "Enter your password",
+    }
+  );
 </script>

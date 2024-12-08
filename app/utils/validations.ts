@@ -50,3 +50,14 @@ export const SendTestEmailSchema = object({
     .label("Data")
     .transform((value) => destr(value || {})),
 });
+
+export const UpdateAccountSchema = object({
+  name: string().required().label("Name").min(3).max(50),
+  email: string().email().required().label("Email"),
+});
+
+export const UpdatePasswordSchema = object({
+  currentPassword: StrongPasswordSchema.required().label("Current password"),
+  newPassword: StrongPasswordSchema.required().label("New password"),
+  revokeOtherSessions: boolean().label("Revoke other sessions").default(false),
+});

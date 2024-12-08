@@ -94,7 +94,11 @@
                 </UiDropdownMenuLabel>
                 <UiDropdownMenuSeparator />
                 <UiDropdownMenuGroup>
-                  <UiDropdownMenuItem icon="lucide:badge-check" title="Account" />
+                  <UiDropdownMenuItem
+                    icon="lucide:badge-check"
+                    title="Account"
+                    @select="$router.push('/admin/profile')"
+                  />
                 </UiDropdownMenuGroup>
                 <UiDropdownMenuSeparator />
                 <UiDropdownMenuItem

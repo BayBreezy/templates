@@ -8,6 +8,12 @@
         </NuxtLink>
       </div>
       <div class="flex items-center gap-2">
+        <div v-tippy="'Go to profile'">
+          <UiButton variant="outline" size="icon-sm" to="/admin/profile">
+            <Icon class="size-4 text-foreground/80" name="lucide:user" />
+            <span class="sr-only">Click to go to profile</span>
+          </UiButton>
+        </div>
         <div v-tippy="'Go to projects'">
           <UiButton variant="outline" size="icon-sm" to="/">
             <Icon class="size-4 text-foreground/80" name="lucide:home" />
