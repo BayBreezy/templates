@@ -41,8 +41,10 @@
     {
       data: "createdAt",
       title: "Created At",
-      render(data) {
-        return useDateFormat(data, "MMM DD, YYYY [at] h:mm A").value;
+      render(data, type) {
+        return type == "display" || type === "filter"
+          ? useDateFormat(data, "MMMM DD, YYYY [at] h:mm A").value
+          : data;
       },
     },
     {

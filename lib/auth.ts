@@ -1,7 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import { admin, bearer, openAPI } from "better-auth/plugins";
+import { admin, bearer, customSession, openAPI } from "better-auth/plugins";
+import geoIp from "geoip-lite";
 
 // Initialize Prisma Client
 const prisma = new PrismaClient();
@@ -17,6 +18,24 @@ const prisma = new PrismaClient();
 export const auth = betterAuth({
   database: prismaAdapter(prisma, { provider: "mysql" }),
   appName: "Templates",
-  plugins: [admin(), openAPI(), bearer()],
   emailAndPassword: { enabled: true, autoSignIn: true, maxPasswordLength: 50 },
+  plugins: [
+    admin(),
+    openAPI(),
+    bearer(),
+    customSession(async ({ user, session }) => {
+      let location = "Unknown location";
+      if (session.ipAddress) {
+        const res = geoIp.lookup(session.ipAddress);
+        if (res) location = `${res.city} ${res.region} ${res.country}`;
+      }
+      return {
+        user,
+        session: {
+          ...session,
+          location: location || undefined,
+        },
+      };
+    }),
+  ],
 });
