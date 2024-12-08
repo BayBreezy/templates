@@ -15,6 +15,7 @@
         <template #actions="{ cellData }: { cellData: Template }">
           <div class="flex items-center justify-end gap-2">
             <UiButton
+              v-tippy="'Edit design'"
               class="size-8"
               size="icon-sm"
               @click="
@@ -24,8 +25,18 @@
             >
               <UiIcon name="lucide:pen-line" />
             </UiButton>
+            <TemplateDuplicate :template="cellData" @refresh="tableRef?.draw()">
+              <UiButton
+                v-tippy="'Duplicate design'"
+                class="size-8"
+                size="icon-sm"
+                variant="outline"
+              >
+                <UiIcon name="lucide:copy"
+              /></UiButton>
+            </TemplateDuplicate>
             <TemplateDelete :template="cellData" @refresh="tableRef?.draw()">
-              <UiButton class="size-8" size="icon-sm" variant="outline">
+              <UiButton v-tippy="'Delete design'" class="size-8" size="icon-sm" variant="outline">
                 <UiIcon name="lucide:trash-2"
               /></UiButton>
             </TemplateDelete>
@@ -75,7 +86,7 @@
       className: "no-export no-column",
       searchable: false,
       orderable: false,
-      width: "150px",
+      width: "190px",
       name: "actions",
       render: "#actions",
       responsivePriority: 1,

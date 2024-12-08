@@ -10,7 +10,7 @@
         </div>
 
         <div class="flex items-center gap-2">
-          <UiDropdownMenu>
+          <UiDropdownMenu v-model:open="dropdownOpen">
             <UiDropdownMenuTrigger as-child>
               <UiButton variant="outline"
                 >Actions <Icon name="solar:alt-arrow-down-line-duotone"
@@ -19,6 +19,19 @@
             <UiDropdownMenuContent class="w-[200px]" align="end" :side-offset="10">
               <UiDropdownMenuGroup class="space-y-1">
                 <UiDropdownMenuLabel label="Main Action" />
+                <TemplateEditName
+                  :template="template?.data"
+                  @refresh="
+                    refresh();
+                    dropdownOpen = false;
+                  "
+                >
+                  <UiDropdownMenuItem
+                    title="Edit name"
+                    icon="lucide:pen-line"
+                    @select="(e) => e.preventDefault()"
+                  />
+                </TemplateEditName>
                 <UiDropdownMenuItem title="Save design" icon="lucide:save" @click="saveDesign" />
                 <UiDropdownMenuSeparator />
                 <UiDropdownMenuLabel label="Other Actions" />
@@ -65,9 +78,10 @@
 
   const route = useRoute("admin-projects-id-templates-templateId-editor");
   const emailEditor = shallowRef<EditorInstance | null | undefined>();
+  const dropdownOpen = ref(false);
 
-  const { data: template } = await useAsyncData(() =>
-    useTemplate().getById(route.params.templateId)
+  const { data: template, refresh } = await useAsyncData(() =>
+    useTemplate().getById(route.params.templateId, route.params.id)
   );
   if (!template.value)
     throw createError({
