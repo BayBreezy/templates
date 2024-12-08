@@ -42,7 +42,7 @@
 <script lang="ts" setup>
   import { UAParser } from "ua-parser-js";
 
-  const { data, refresh } = await useAsyncData(() => authClient.listSessions());
+  const { data } = await useAsyncData(() => authClient.listSessions());
   withDefaults(
     defineProps<{
       title?: string;
