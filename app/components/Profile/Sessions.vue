@@ -7,7 +7,7 @@
       <p v-if="description">{{ description }}</p>
     </slot>
 
-    <ul class="mt-10">
+    <ul class="mt-10 flex flex-col gap-5">
       <template v-for="(s, i) in data?.data" :key="i">
         <li class="flex flex-col gap-1 rounded-lg border p-5 text-sm">
           <p class="font-semibold">
