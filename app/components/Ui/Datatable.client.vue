@@ -585,6 +585,11 @@
     }
   }
 
+  /* Checkbox */
+  input.dt-select-checkbox {
+    @apply form-checkbox size-5 cursor-pointer rounded border-border bg-transparent text-sky-500 transition focus:outline-none focus:ring-2 focus:ring-muted focus:ring-offset-2 focus:ring-offset-background;
+  }
+
   /* Search box at the top styles -v2 */
   .dt-search {
     @apply flex items-center gap-3;
