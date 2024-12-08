@@ -94,6 +94,16 @@ export const useTemplate = () => {
     return await $fetch(`/api/templates/${id}/send-test-email`, { method: "POST", body: data });
   };
 
+  /**
+   * Duplicates a template by creating a new copy of it.
+   *
+   * @param id - The ID of the template to duplicate.
+   * @returns A promise that resolves to the duplicated template.
+   */
+  const duplicate = async (id: string) => {
+    return await $fetch<FindOne<Template>>(`/api/templates/${id}/duplicate`, { method: "POST" });
+  };
+
   return {
     get,
     create,
@@ -103,5 +113,6 @@ export const useTemplate = () => {
     previewTemplate,
     exportTemplate,
     sendTestTemplate,
+    duplicate,
   };
 };
