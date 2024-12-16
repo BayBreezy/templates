@@ -21,6 +21,6 @@
   );
   const forwarded = reactiveOmit(props, "class");
   const styles = tv({
-    base: "flex flex-col space-y-2",
+    base: "flex flex-col space-y-2 text-center sm:text-left",
   });
 </script>
