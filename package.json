@@ -22,7 +22,7 @@
     "@iconify/vue": "^4.2.0",
     "@morev/vue-transitions": "^3.0.5",
     "@nuxt/fonts": "^0.10.3",
-    "@prisma/client": "^6.0.1",
+    "@prisma/client": "^6.1.0",
     "@vee-validate/nuxt": "^4.14.7",
     "@vee-validate/yup": "^4.14.7",
     "better-auth": "^1.0.21",
