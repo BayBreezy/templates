@@ -33,8 +33,6 @@
                   />
                 </TemplateEditName>
                 <UiDropdownMenuItem title="Save design" icon="lucide:save" @click="saveDesign" />
-                <UiDropdownMenuSeparator />
-                <UiDropdownMenuLabel label="Other Actions" />
                 <TemplateTestEmail>
                   <UiDropdownMenuItem
                     title="Send Test Email"
@@ -42,21 +40,30 @@
                     @select="(e) => e.preventDefault()"
                   />
                 </TemplateTestEmail>
+                <UiDropdownMenuSeparator />
+                <UiDropdownMenuItem title="Copy HTML" icon="lucide:copy" @select="copyHTML" />
+                <UiDropdownMenuItem title="Copy Design" icon="lucide:copy" @select="copyDesign" />
+                <UiDropdownMenuSeparator />
                 <UiDropdownMenuItem
                   title="Export HTML"
                   icon="lucide:cloud-download"
-                  @click="exportHtml"
+                  @select="exportHtml"
+                />
+                <UiDropdownMenuItem
+                  title="Export HTML"
+                  icon="lucide:cloud-download"
+                  @select="exportHtml"
                 />
                 <UiDropdownMenuItem
                   title="Preview design"
                   icon="lucide:telescope"
-                  @click="preview"
+                  @select="preview"
                 />
                 <UiDropdownMenuItem title="Import design" icon="lucide:upload" @click="open()" />
                 <UiDropdownMenuItem
                   title="Download design"
                   icon="lucide:download"
-                  @click="downloadDesign()"
+                  @select="downloadDesign()"
                 />
               </UiDropdownMenuGroup>
             </UiDropdownMenuContent>
@@ -134,6 +141,26 @@
       console.log(data);
 
       useTemplate().previewTemplate(data.html);
+    });
+  }
+
+  function copyHTML() {
+    emailEditor.value?.exportHtml(async (data) => {
+      const { copy } = useClipboard();
+      await copy(data.html);
+      useSonner.success("HTML copied to clipboard", {
+        description: "You can now paste the HTML content to your email client",
+      });
+    });
+  }
+
+  function copyDesign() {
+    emailEditor.value?.exportHtml(async (data) => {
+      const { copy } = useClipboard();
+      await copy(JSON.stringify(data.design));
+      useSonner.success("Design copied to clipboard", {
+        description: "You can now paste the design content to your email client",
+      });
     });
   }
 
