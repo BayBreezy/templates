@@ -74,7 +74,65 @@
 
     <section class="h-[calc(100dvh-65px)]">
       <ClientOnly>
-        <EmailEditor display-mode="email" @ready="editorLoaded" />
+        <EmailEditor
+          :features="{
+            textEditor: {
+              tables: true,
+              spellChecker: true,
+            },
+          }"
+          :merge-tags-config="{
+            autocompleteTriggerChar: '@',
+            sort: false,
+            delimiter: ['{{', '}}'],
+          }"
+          :merge-tags="{
+            mustache: {
+              name: 'Mustache',
+              mergeTags: {
+                basic: {
+                  name: 'Basic Output',
+                  mergeTags: {
+                    raw: {
+                      name: 'Display Raw Content',
+                      value: '{{{REPLACE_ME}}}',
+                    },
+                    output: {
+                      name: 'Regular Output',
+                      value: '{{REPLACE_ME}}',
+                    },
+                    dottedOutput: {
+                      name: 'Dot notation for Output',
+                      value: '{{REPLACE_ME.NESTED_VALUE}}',
+                    },
+                  },
+                },
+                loops: {
+                  name: 'Loops',
+                  mergeTags: {
+                    raw: {
+                      name: 'Display Raw Content in Loop',
+                      value:
+                        '{{#ARRAY_OR_OBJECT_TO_ITERATE}}\n{{{REPLACE_ME}}}\n{{/ARRAY_OR_OBJECT_TO_ITERATE}}',
+                    },
+                    output: {
+                      name: 'Regular Output in Loop',
+                      value:
+                        '{{#ARRAY_OR_OBJECT_TO_ITERATE}}\n{{REPLACE_ME}}\n{{/ARRAY_OR_OBJECT_TO_ITERATE}}',
+                    },
+                    dottedOutput: {
+                      name: 'Dot notation for Output in Loop',
+                      value:
+                        '{{#ARRAY_OR_OBJECT_TO_ITERATE}}\n{{REPLACE_ME.NESTED_VALUE}}\n{{/ARRAY_OR_OBJECT_TO_ITERATE}}',
+                    },
+                  },
+                },
+              },
+            },
+          }"
+          display-mode="email"
+          @ready="editorLoaded"
+        />
       </ClientOnly>
     </section>
   </div>
@@ -105,63 +163,81 @@
   }
 
   function saveDesign() {
-    emailEditor.value?.exportHtml(async (data) => {
-      try {
-        await useTemplate().update(template.value!.data.id!, {
-          design: data.design,
-          html: data.html,
-          name: template.value?.data?.name,
-        });
-        useSonner.success("Design saved successfully");
-      } catch (error) {
-        useSonner.error("Unable to save design", {
-          description: formatErrorMessage(error),
-        });
-      }
-    });
+    emailEditor.value?.exportHtml(
+      async (data) => {
+        try {
+          await useTemplate().update(template.value!.data.id!, {
+            design: data.design,
+            html: data.html,
+            name: template.value?.data?.name,
+          });
+          useSonner.success("Design saved successfully");
+        } catch (error) {
+          useSonner.error("Unable to save design", {
+            description: formatErrorMessage(error),
+          });
+        }
+      },
+      { inlineStyles: true }
+    );
   }
 
   function exportHtml() {
-    emailEditor.value?.exportHtml(async (data) => {
-      useTemplate().exportTemplate(template.value?.data?.name + ".html", data.html);
-    });
+    emailEditor.value?.exportHtml(
+      async (data) => {
+        useTemplate().exportTemplate(template.value?.data?.name + ".html", data.html);
+      },
+      { inlineStyles: true }
+    );
   }
 
   function downloadDesign() {
-    emailEditor.value?.exportHtml(async (data) => {
-      useTemplate().exportTemplate(
-        template.value?.data?.name + ".json",
-        JSON.stringify(data.design)
-      );
-    });
+    emailEditor.value?.exportHtml(
+      async (data) => {
+        useTemplate().exportTemplate(
+          template.value?.data?.name + ".json",
+          JSON.stringify(data.design)
+        );
+      },
+      { inlineStyles: true }
+    );
   }
 
   function preview() {
-    emailEditor?.value?.exportHtml(async (data) => {
-      console.log(data);
+    emailEditor?.value?.exportHtml(
+      async (data) => {
+        console.log(data);
 
-      useTemplate().previewTemplate(data.html);
-    });
+        useTemplate().previewTemplate(data.html);
+      },
+      { inlineStyles: true }
+    );
   }
 
   function copyHTML() {
-    emailEditor.value?.exportHtml(async (data) => {
-      const { copy } = useClipboard();
-      await copy(data.html);
-      useSonner.success("HTML copied to clipboard", {
-        description: "You can now paste the HTML content to your email client",
-      });
-    });
+    emailEditor.value?.exportHtml(
+      async (data) => {
+        const { copy } = useClipboard();
+        await copy(data.html);
+        useSonner.success("HTML copied to clipboard", {
+          description: "You can now paste the HTML content to your email client",
+        });
+      },
+      { inlineStyles: true }
+    );
   }
 
   function copyDesign() {
-    emailEditor.value?.exportHtml(async (data) => {
-      const { copy } = useClipboard();
-      await copy(JSON.stringify(data.design));
-      useSonner.success("Design copied to clipboard", {
-        description: "You can now paste the design content to your email client",
-      });
-    });
+    emailEditor.value?.exportHtml(
+      async (data) => {
+        const { copy } = useClipboard();
+        await copy(JSON.stringify(data.design));
+        useSonner.success("Design copied to clipboard", {
+          description: "You can now paste the design content to your email client",
+        });
+      },
+      { inlineStyles: true }
+    );
   }
 
   const { open, onChange: importDesign } = useFileDialog({
