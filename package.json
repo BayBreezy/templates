@@ -64,7 +64,7 @@
     "nodemailer-html-to-text": "^3.2.0",
     "nuxt-unlayer": "^0.0.22",
     "prisma-extension-pagination": "^0.7.5",
-    "radix-vue": "^1.9.12",
+    "radix-vue": "^1.9.14",
     "tailwind-variants": "^0.3.1",
     "ua-parser-js": "^2.0.0",
     "vue": "^3.5.13",
